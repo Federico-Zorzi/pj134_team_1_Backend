@@ -20,14 +20,14 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // * ROUTERS SETUP
-const homepageRouter = require("./routers/homepage");
-app.use("/", homepageRouter);
+// const homepageRouter = require("./routers/homepage");
+// app.use("/", homepageRouter);
 
 // * MIDDLEWARES FOR ERRORS
 app.use(errorHandler);
 app.use(notFound);
 
 // * SERVER LISTEN
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(`Server listening at ${https}://${host}`);
 });
