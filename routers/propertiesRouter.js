@@ -13,6 +13,9 @@ propertiesRouter.get("/", propertiesController.index);
 //show
 propertiesRouter.get("/:id", propertiesController.show);
 
+//store
+propertiesRouter.post("/add", propertiesController.store);
+
 //*REVIEWS CRUD
 
 //index
