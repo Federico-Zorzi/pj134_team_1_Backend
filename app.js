@@ -1,3 +1,8 @@
+// * MODULI DA INSTALLARE SE NON GIA PRESENTI
+// npm i cors
+// npm i mysql2
+// npm i dotenv
+
 // * DOTENV(.env) SETUP FOR GENERAL CONFIGURATION
 require("dotenv").config();
 
@@ -23,7 +28,7 @@ app.use(express.static("public"));
 
 // * ROUTERS SETUP
 const propertiesRouter = require("./routers/propertiesRouter");
-app.use("/", propertiesRouter);
+app.use("/properties", propertiesRouter);
 
 // * MIDDLEWARES FOR ERRORS
 app.use(errorHandler);

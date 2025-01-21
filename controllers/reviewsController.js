@@ -3,18 +3,9 @@ const connection = require("../db_connection");
 
 //index
 function index(req, res) {
-  const sql = "SELECT * FROM properties";
-
-  connection.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database query failed" });
-    res.json(results);
-  });
-}
-
-//show
-function show(req, res) {
   const { id } = req.params;
-  const sql = "SELECT * from properties where id = ?;";
+  const sql =
+    "SELECT name,content,living_days,vote,left_in,vote FROM reviews JOIN properties ON reviews.property_id = properties.id WHERE property_id = ?";
   if (isNaN(id) || id < 1) {
     const err = new Error("Id inserito invalido");
     err.code = 400;
@@ -26,4 +17,4 @@ function show(req, res) {
   });
 }
 
-module.exports = { index, show };
+module.exports = { index };
