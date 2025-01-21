@@ -15,4 +15,31 @@ function index(req, res) {
   });
 }
 
-module.exports = { index };
+//store
+function store(req, res) {
+  const { id } = req.params;
+
+  const { name, content, left_in, living_days, vote } = req.body;
+
+  if (isNaN(id) || id < 1) {
+    return res.status(400).json({ error: "Id inserito non valido" });
+  }
+  if (!name || !content || !left_in || !living_days || !vote) {
+    return res
+      .status(400)
+      .json({ error: "Mancano parametri essenziali alla richiesta" });
+  }
+
+  const sql =
+    "INSERT INTO reviews (property_id, name, content, left_in, living_days, vote) VALUES (?, ?, ?, ?, ?, ?);";
+  connection.query(
+    sql,
+    [id, name, content, left_in, living_days, vote],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      res.status(201).json({ message: "Recensione aggiunta con successo!" });
+    }
+  );
+}
+
+module.exports = { index, store };

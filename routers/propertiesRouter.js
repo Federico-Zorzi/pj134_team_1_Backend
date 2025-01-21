@@ -21,4 +21,8 @@ propertiesRouter.post("/add", propertiesController.store);
 //index
 propertiesRouter.get("/:id/reviews", reviewsController.index);
 
+//store
+
+propertiesRouter.post("/:id/addreview", reviewsController.store);
+
 module.exports = propertiesRouter;
