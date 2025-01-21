@@ -10,6 +10,8 @@ const host =
 const port = process.env.PORT;
 
 // * MIDDLEWARES REGISTERING
+var cors = require("cors");
+app.use(cors());
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -20,8 +22,8 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // * ROUTERS SETUP
-// const homepageRouter = require("./routers/homepage");
-// app.use("/", homepageRouter);
+const propertiesRouter = require("./routers/propertiesRouter");
+app.use("/", propertiesRouter);
 
 // * MIDDLEWARES FOR ERRORS
 app.use(errorHandler);
