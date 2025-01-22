@@ -56,4 +56,10 @@ function store(req, res) {
   );
 }
 
+//delete
+function destroy(req, res) {
+  const { reviewId } = req.body;
+  const sql = "DELETE FROM reviews WHERE id = ? ";
+}
+
 module.exports = { index, store };
