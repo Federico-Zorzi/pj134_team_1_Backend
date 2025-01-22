@@ -25,6 +25,7 @@ function store(req, res) {
   if (isNaN(id) || id < 1) {
     return res.status(400).json({ error: "Id inserito non valido" });
   }
+
   if (!name || !content || !left_in || !living_days || !vote) {
     return res
       .status(400)
@@ -33,6 +34,14 @@ function store(req, res) {
 
   if (isNaN(vote) || vote > 5 || vote < 1) {
     return res.status(400).json({ error: "Il voto è invalido" });
+  }
+
+  //TODO controllo che left_in  sia una data
+
+  if (isNaN(living_days)) {
+    return res
+      .status(400)
+      .json({ error: "I giorni vissuti inseriti sono invalidi" });
   }
 
   const sql =

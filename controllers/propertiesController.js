@@ -31,6 +31,7 @@ function show(req, res) {
 
 //store
 function store(req, res) {
+  //destrutturazione del body
   const {
     title,
     n_Rooms,
@@ -44,6 +45,7 @@ function store(req, res) {
     city,
   } = req.body;
 
+  //inizializzazione likes
   const likes = 0;
 
   //controllo dei parametri nullabili
@@ -102,4 +104,29 @@ function store(req, res) {
   );
 }
 
-module.exports = { index, show, store };
+//delete
+function destroy(req, res) {
+  const { id } = req.params;
+  const sqlReviews = "DELETE FROM reviews WHERE property_id = ?";
+
+  if (isNaN(id) || id < 1) {
+    return res.status(400).json({ error: "Id inserito non valido" });
+  }
+
+  //chiamata per cancellare le review
+  connection.query(sqlReviews, [id], (err, results) => {
+    const sqlProperties = "DELETE FROM properties WHERE id = ?;";
+
+    //chiamata per cancellare l'immobile
+    connection.query(sqlProperties, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+
+      if (results.length < 1) {
+        return res.status(404).json({ error: "Id non trovato" });
+      }
+
+      res.status(200).json({ error: "Proprietà cancellata con successo!" });
+    });
+  });
+}
+module.exports = { index, show, store, destroy };

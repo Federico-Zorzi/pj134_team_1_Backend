@@ -62,8 +62,7 @@ propertiesRouter.get("/:id", propertiesController.show);
 propertiesRouter.post("/add", propertiesController.store);
 
 //add like update
-//l'id qua rappresenta l'id delle review
-propertiesRouter.post("/:id/addlike", (req, res) => {
+propertiesRouter.patch("/:id/addlike", (req, res) => {
   const { id } = req.params;
 
   const sql = "UPDATE properties SET likes = likes + 1 WHERE id = ?";
@@ -73,6 +72,8 @@ propertiesRouter.post("/:id/addlike", (req, res) => {
     res.json("Like aggiunto con successo");
   });
 });
+
+propertiesRouter.delete("/:id/delete", propertiesController.destroy);
 
 //*REVIEWS CRUD
 
