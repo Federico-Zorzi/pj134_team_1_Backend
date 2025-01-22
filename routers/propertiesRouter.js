@@ -86,6 +86,9 @@ propertiesRouter.patch("/:id/addlike", (req, res) => {
 
 propertiesRouter.delete("/:id/delete", propertiesController.destroy);
 
+//update
+propertiesRouter.put("/:id/update", propertiesController.update);
+
 //*REVIEWS CRUD
 
 //index

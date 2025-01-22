@@ -104,6 +104,73 @@ function store(req, res) {
   );
 }
 
+//update
+function update(req, res) {
+  const { id } = req.params;
+
+  const fetchSql = `SELECT * FROM properties WHERE id = ?`;
+
+  connection.query(fetchSql, [id], (fetchErr, fetchResults) => {
+    if (fetchErr)
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch existing property data" });
+    if (fetchResults.length === 0)
+      return res.status(404).json({ error: "Property not found" });
+
+    const existingData = fetchResults[0];
+
+    const {
+      title = existingData.title,
+      n_Rooms = existingData.n_Rooms,
+      n_Beds = existingData.n_Beds,
+      n_Bathrooms = existingData.n_Bathrooms,
+      square_meters = existingData.square_meters,
+      address = existingData.address,
+      reference_email = existingData.reference_email,
+      property_type = existingData.property_type,
+      image = existingData.image,
+      city = existingData.city,
+    } = req.body;
+
+    const updateSql = `
+      UPDATE properties
+      SET title = ?,
+          n_Rooms = ?,
+          n_Beds = ?,
+          n_Bathrooms = ?,
+          square_meters = ?,
+          address = ?,
+          reference_email = ?,
+          property_type = ?,
+          image = ?,
+          city = ?
+      WHERE id = ?;
+    `;
+
+    const values = [
+      title,
+      n_Rooms,
+      n_Beds,
+      n_Bathrooms,
+      square_meters,
+      address,
+      reference_email,
+      property_type,
+      image,
+      city,
+      id,
+    ];
+
+    // Update the property with new or retained data
+    connection.query(updateSql, values, (updateErr, updateResults) => {
+      if (updateErr)
+        return res.status(500).json({ error: "Database update failed" });
+      res.json({ message: "Proprietà modificata con successo!" });
+    });
+  });
+}
+
 //delete
 function destroy(req, res) {
   const { id } = req.params;
@@ -129,4 +196,4 @@ function destroy(req, res) {
     });
   });
 }
-module.exports = { index, show, store, destroy };
+module.exports = { index, show, store, destroy, update };
