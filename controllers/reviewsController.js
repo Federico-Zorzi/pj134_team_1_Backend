@@ -5,7 +5,7 @@ const connection = require("../db_connection");
 function index(req, res) {
   const { id } = req.params;
   const sql =
-    "SELECT reviews.id,name,content,living_days,vote,left_in,vote FROM reviews JOIN properties ON reviews.property_id = properties.id WHERE property_id = ?";
+    "SELECT reviews.id,name,content,living_days,vote,check_in,vote FROM reviews JOIN properties ON reviews.property_id = properties.id WHERE property_id = ?";
   if (isNaN(id) || id < 1) {
     return res.status(400).json({ error: "Id inserito non valido" });
   }
@@ -20,13 +20,13 @@ function index(req, res) {
 function store(req, res) {
   const { id } = req.params;
 
-  const { name, content, left_in, living_days, vote } = req.body;
+  const { name, content, check_in, living_days, vote } = req.body;
 
   if (isNaN(id) || id < 1) {
     return res.status(400).json({ error: "Id inserito non valido" });
   }
 
-  if (!name || !content || !left_in || !living_days || !vote) {
+  if (!name || !content || !check_in || !living_days || !vote) {
     return res
       .status(400)
       .json({ error: "Mancano parametri essenziali alla richiesta" });
@@ -36,7 +36,7 @@ function store(req, res) {
     return res.status(400).json({ error: "Il voto è invalido" });
   }
   //trasformo left in in una data
-  const left_inDate = new Date(left_in);
+  const left_inDate = new Date(check_in);
   //controllo la validità
   if (isNaN(left_inDate.getTime())) {
     return res.status(400).json({ error: "La data è invalida" });
@@ -49,10 +49,10 @@ function store(req, res) {
   }
 
   const sql =
-    "INSERT INTO reviews (property_id, name, content, left_in, living_days, vote) VALUES (?, ?, ?, ?, ?, ?);";
+    "INSERT INTO reviews (property_id, name, content, check_in, living_days, vote) VALUES (?, ?, ?, ?, ?, ?);";
   connection.query(
     sql,
-    [id, name, content, left_in, living_days, vote],
+    [id, name, content, check_in, living_days, vote],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
       res.status(201).json({ message: "Recensione aggiunta con successo!" });
@@ -78,6 +78,7 @@ function update(req, res) {
       content = existingData.content,
       living_days = existingData.living_days,
       vote = existingData.vote,
+      check_in = existingData.check_in,
     } = req.body;
 
     //controllo che le variabili numeriche siano numeri
@@ -90,10 +91,10 @@ function update(req, res) {
       return res.status(400).json({ error: "Il voto deve essere un numero" });
     }
     const updateSql =
-      "UPDATE reviews SET name = ?, content = ?, living_days = ?, vote = ? WHERE id = ?";
+      "UPDATE reviews SET name = ?, content = ?, check_in = ?, living_days = ?, vote = ? WHERE id = ?";
     connection.query(
       updateSql,
-      [name, content, living_days, vote, id],
+      [name, content, check_in, living_days, vote, id],
       (updateErr, updateResults) => {
         if (updateErr)
           return res.status(500).json({ error: "Database update failed" });
