@@ -46,7 +46,7 @@ propertiesRouter.get("/filtered", (req, res) => {
     params.push(property_type);
   }
 
-  // Ordinamento per numero di cuoricini (gradimento)
+  //ordinati per gradimento
   query += " ORDER BY likes DESC";
 
   connection.query(query, params, (err, results) => {
@@ -65,6 +65,13 @@ propertiesRouter.post("/add", propertiesController.store);
 
 //index
 propertiesRouter.get("/:id/reviews", reviewsController.index);
+
+//add like update
+//l'id qua rappresenta l'id delle review
+propertiesRouter.post(":id/addlike", (req, res) => {
+  const { id } = req.params;
+  const sql = "UPDATE properties SET likes = likes + 1 WHERE id = ?";
+});
 
 //store
 

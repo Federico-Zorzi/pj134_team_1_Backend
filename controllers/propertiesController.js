@@ -22,6 +22,9 @@ function show(req, res) {
 
   connection.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ error: "Database query failed" });
+    if (!results) {
+      return res.status(404).json({ error: "Id non trovato" });
+    }
     res.json(results);
   });
 }
