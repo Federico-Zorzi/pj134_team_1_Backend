@@ -130,7 +130,7 @@ function store(req, res) {
 function update(req, res) {
   const { id } = req.params;
 
-  const fetchSql = `SELECT * FROM properties WHERE id = ?`;
+  const fetchSql = "SELECT * FROM properties WHERE id = ?";
 
   connection.query(fetchSql, [id], (fetchErr, fetchResults) => {
     if (fetchErr)
@@ -138,7 +138,7 @@ function update(req, res) {
         .status(500)
         .json({ error: "Failed to fetch existing property data" });
     if (fetchResults.length === 0)
-      return res.status(404).json({ error: "Property not found" });
+      return res.status(404).json({ error: "Proprietà non trovata" });
 
     const existingData = fetchResults[0];
 
@@ -184,20 +184,8 @@ function update(req, res) {
       return res.status(400).json({ error: "L'email inserita è invalida" });
     }
 
-    const updateSql = `
-      UPDATE properties
-      SET title = ?,
-          n_Rooms = ?,
-          n_Beds = ?,
-          n_Bathrooms = ?,
-          square_meters = ?,
-          address = ?,
-          reference_email = ?,
-          property_type = ?,
-          image = ?,
-          city = ?
-      WHERE id = ?;
-    `;
+    const updateSql =
+      "  UPDATE properties SET title = ?,    n_Rooms = ?,    n_Beds = ?,   n_Bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    city = ?WHERE id = ?; ";
 
     const values = [
       title,

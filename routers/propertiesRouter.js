@@ -2,12 +2,14 @@
 //* INDEX FILTRATO : host/properties/filtered
 //* SHOW PROPERTY : host/properties/:id
 //* STORE PROPERTY : host/properties/add
-//* DELETE PROPERTY : host/properties/:id/delete :
+//* DELETE PROPERTY : host/properties/:id/delete
 //* ADD LIKE : host/properties/:id/addlike
+//* UPDATE PROPERTY : host/properties/:id/update
 
-//* INDEX REVIEWS : host/properties/:id/reviews
-//* STORE REVIEW : host/properties/:id/addreview
-//* DELETE REVIEW: host/properties/deletereview/:id
+//* INDEX REVIEWS : host/properties/:id/reviews //  L'ID é DELLA PROPRIETA'
+//* STORE REVIEW : host/properties/:id/addreview //  L'ID é DELLA PROPRIETA'
+//* DELETE REVIEW : host/properties/deletereview/:id // L'ID é DELLA REVIEW
+//* UPDATE REVIEW : host/properties/updatereview/:id // L'ID é DELLA REVIEW
 
 //Inizializzazione express
 const express = require("express");
@@ -96,6 +98,9 @@ propertiesRouter.get("/:id/reviews", reviewsController.index);
 
 //store
 propertiesRouter.post("/:id/addreview", reviewsController.store);
+
+//update
+propertiesRouter.put("/updatereview/:id", reviewsController.update);
 
 //delete
 propertiesRouter.delete("/deletereview/:id", reviewsController.destroy);

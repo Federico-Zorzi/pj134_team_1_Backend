@@ -60,6 +60,49 @@ function store(req, res) {
   );
 }
 
+//update
+function update(req, res) {
+  const { id } = req.params;
+
+  const fetchSql = "SELECT * FROM reviews WHERE id = ?";
+  connection.query(fetchSql, [id], (fetchErr, fetchResults) => {
+    if (fetchErr)
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch existing property data" });
+    if (fetchResults.length === 0)
+      return res.status(404).json({ error: "Recensione non trovata" });
+    const existingData = fetchResults[0];
+    const {
+      name = existingData.name,
+      content = existingData.content,
+      living_days = existingData.living_days,
+      vote = existingData.vote,
+    } = req.body;
+
+    //controllo che le variabili numeriche siano numeri
+    if (isNaN(living_days)) {
+      return res
+        .status(400)
+        .json({ error: "I giorni di permanenza devono essere un numero" });
+    }
+    if (isNaN(vote)) {
+      return res.status(400).json({ error: "Il voto deve essere un numero" });
+    }
+    const updateSql =
+      "UPDATE reviews SET name = ?, content = ?, living_days = ?, vote = ? WHERE id = ?";
+    connection.query(
+      updateSql,
+      [name, content, living_days, vote, id],
+      (updateErr, updateResults) => {
+        if (updateErr)
+          return res.status(500).json({ error: "Database update failed" });
+        res.json({ message: "Recensione modificata con successo!" });
+      }
+    );
+  });
+}
+
 //delete
 function destroy(req, res) {
   //L'ID DELLA REVIEW DA CANCELLARE VA INVIATO NEL BODY
@@ -77,4 +120,4 @@ function destroy(req, res) {
   });
 }
 
-module.exports = { index, store, destroy };
+module.exports = { index, store, destroy, update };
