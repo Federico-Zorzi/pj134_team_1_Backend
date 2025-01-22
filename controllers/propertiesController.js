@@ -48,6 +48,12 @@ function store(req, res) {
   //inizializzazione likes
   const likes = 0;
 
+  //controllo di validità della mail
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (reference_email && !emailRegex.test(reference_email)) {
+    return res.status(400).json({ error: "L'email inserita è invalida" });
+  }
+
   //controllo dei parametri nullabili
   if (!property_type) {
     property_type = "apartment";
@@ -72,11 +78,27 @@ function store(req, res) {
       .json({ error: "Mancano parametri essenziali alla richiesta" });
   }
 
-  //controllo che i metri quadri siano un numero
+  //controllo le varibili numeriche siano numeri
   if (isNaN(square_meters)) {
     return res
       .status(400)
       .json({ error: "I metri quadri devono essere un numero" });
+  }
+  if (isNaN(n_Beds)) {
+    return res
+      .status(400)
+      .json({ error: "Il numero di letti deve essere un numero" });
+  }
+
+  if (isNaN(n_Bathrooms)) {
+    return res
+      .status(400)
+      .json({ error: "Il numero di bagni deve essere un numero" });
+  }
+  if (isNaN(n_Rooms)) {
+    return res
+      .status(400)
+      .json({ error: "Il numero di stanze deve essere un numero" });
   }
 
   const sql =
@@ -132,6 +154,35 @@ function update(req, res) {
       image = existingData.image,
       city = existingData.city,
     } = req.body;
+
+    //controllo le varibili numeriche siano numeri
+    if (isNaN(square_meters)) {
+      return res
+        .status(400)
+        .json({ error: "I metri quadri devono essere un numero" });
+    }
+    if (isNaN(n_Beds)) {
+      return res
+        .status(400)
+        .json({ error: "Il numero di letti deve essere un numero" });
+    }
+
+    if (isNaN(n_Bathrooms)) {
+      return res
+        .status(400)
+        .json({ error: "Il numero di bagni deve essere un numero" });
+    }
+    if (isNaN(n_Rooms)) {
+      return res
+        .status(400)
+        .json({ error: "Il numero di stanze deve essere un numero" });
+    }
+
+    //controllo di validità della mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (reference_email && !emailRegex.test(reference_email)) {
+      return res.status(400).json({ error: "L'email inserita è invalida" });
+    }
 
     const updateSql = `
       UPDATE properties
