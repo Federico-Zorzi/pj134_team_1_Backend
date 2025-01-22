@@ -1,3 +1,14 @@
+//* INDEX PROPERTIES : host/properties
+//* INDEX FILTRATO : host/properties/filtered
+//* SHOW PROPERTY : host/properties/:id
+//* STORE PROPERTY : host/properties/add
+//* DELETE PROPERTY : host/properties/:id/delete :
+//* ADD LIKE : host/properties/:id/addlike
+
+//* INDEX REVIEWS : host/properties/:id/reviews
+//* STORE REVIEW : host/properties/:id/addreview
+//* DELETE REVIEW: host/properties/deletereview/:id
+
 //Inizializzazione express
 const express = require("express");
 //Permessi di routing da express
