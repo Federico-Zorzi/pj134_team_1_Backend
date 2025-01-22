@@ -30,6 +30,10 @@ function store(req, res) {
       .json({ error: "Mancano parametri essenziali alla richiesta" });
   }
 
+  if (isNaN(vote) || vote > 5 || vote < 1) {
+    return res.status(400).json({ error: "Il voto è invalido" });
+  }
+
   const sql =
     "INSERT INTO reviews (property_id, name, content, left_in, living_days, vote) VALUES (?, ?, ?, ?, ?, ?);";
   connection.query(
