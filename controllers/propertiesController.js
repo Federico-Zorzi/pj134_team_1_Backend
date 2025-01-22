@@ -55,8 +55,9 @@ function store(req, res) {
   }
 
   //controllo dei parametri nullabili
+
   if (!property_type) {
-    property_type = "apartment";
+    property_type = "other";
   }
   if (!image) {
     image = "default.jpg";
