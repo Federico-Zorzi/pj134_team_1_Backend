@@ -61,17 +61,23 @@ propertiesRouter.get("/:id", propertiesController.show);
 //store
 propertiesRouter.post("/add", propertiesController.store);
 
+//add like update
+//l'id qua rappresenta l'id delle review
+propertiesRouter.post("/:id/addlike", (req, res) => {
+  const { id } = req.params;
+
+  const sql = "UPDATE properties SET likes = likes + 1 WHERE id = ?";
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    res.json("Like aggiunto con successo");
+  });
+});
+
 //*REVIEWS CRUD
 
 //index
 propertiesRouter.get("/:id/reviews", reviewsController.index);
-
-//add like update
-//l'id qua rappresenta l'id delle review
-propertiesRouter.post(":id/addlike", (req, res) => {
-  const { id } = req.params;
-  const sql = "UPDATE properties SET likes = likes + 1 WHERE id = ?";
-});
 
 //store
 
