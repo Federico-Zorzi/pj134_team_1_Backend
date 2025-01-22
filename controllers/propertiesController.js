@@ -40,17 +40,17 @@ function store(req, res) {
     square_meters,
     address,
     reference_email,
-    property_type,
-    image,
     city,
   } = req.body;
+
+  let { property_type, image } = req.body;
 
   //inizializzazione likes
   const likes = 0;
 
   //controllo dei parametri nullabili
   if (!property_type) {
-    property_type = "";
+    property_type = "apartment";
   }
   if (!image) {
     image = "default.jpg";
