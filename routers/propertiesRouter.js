@@ -81,7 +81,9 @@ propertiesRouter.delete("/:id/delete", propertiesController.destroy);
 propertiesRouter.get("/:id/reviews", reviewsController.index);
 
 //store
-
 propertiesRouter.post("/:id/addreview", reviewsController.store);
+
+//delete
+propertiesRouter.delete("/deletereview/:id", reviewsController.destroy);
 
 module.exports = propertiesRouter;
