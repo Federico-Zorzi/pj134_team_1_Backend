@@ -1,3 +1,8 @@
+//* INDEX USERS : host/users/
+//* SHOW USER : host/users/:id
+//* INDEX USERS EMAILS : host/users/emails
+//* STORE USER : users/add
+
 //Inizializzazione express
 const express = require("express");
 //Permessi di routing da express
@@ -13,11 +18,20 @@ const usersController = require("../controllers/usersController");
 //index
 usersRouter.get("/", usersController.index);
 
+//email index
+usersRouter.get("/emails", (req, res) => {
+  const sql = "SELECT email FROM users";
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    if (results.length < 1) {
+      return res.status(404).json({ error: "Nessuna mail trovata" });
+    }
+    res.json(results);
+  });
+});
+
 //show
 usersRouter.get("/:id", usersController.show);
-
-//email index
-usersRouter.get("/emails");
 
 //store
 usersRouter.post("/add", usersController.store);

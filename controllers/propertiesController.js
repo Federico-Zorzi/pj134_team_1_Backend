@@ -41,18 +41,13 @@ function store(req, res) {
     address,
     reference_email,
     city,
+    owner_id,
   } = req.body;
 
   let { property_type, image } = req.body;
 
   //inizializzazione likes
   const likes = 0;
-
-  //controllo di validità della mail
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (reference_email && !emailRegex.test(reference_email)) {
-    return res.status(400).json({ error: "L'email inserita è invalida" });
-  }
 
   //controllo dei parametri nullabili
 
