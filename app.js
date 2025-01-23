@@ -29,6 +29,8 @@ app.use(express.static("public"));
 // * ROUTERS SETUP
 const propertiesRouter = require("./routers/propertiesRouter");
 app.use("/properties", propertiesRouter);
+const usersRouter = require("./routers/usersRouter");
+app.use("/users", usersRouter);
 
 // * MIDDLEWARES FOR ERRORS
 app.use(errorHandler);
