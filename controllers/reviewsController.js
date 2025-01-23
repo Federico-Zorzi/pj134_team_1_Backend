@@ -38,10 +38,13 @@ function store(req, res) {
   if (isNaN(vote) || vote > 5 || vote < 1) {
     return res.status(400).json({ error: "Il voto è invalido" });
   }
-  //trasformo left in in una data
-  const left_inDate = new Date(check_in);
+  //trasformo check_in in una data
+  const check_inDate = new Date(check_in);
+  //creo la data di oggi per comparare
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   //controllo la validità
-  if (isNaN(left_inDate.getTime())) {
+  if (isNaN(check_inDate.getTime()) || check_inDate < today) {
     return res.status(400).json({ error: "La data è invalida" });
   }
 
@@ -83,6 +86,16 @@ function update(req, res) {
       vote = existingData.vote,
       check_in = existingData.check_in,
     } = req.body;
+
+    //trasformo check_in in una data
+    const check_inDate = new Date(check_in);
+    //creo la data di oggi per comparare
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    //controllo la validità
+    if (isNaN(check_inDate.getTime()) || check_inDate < today) {
+      return res.status(400).json({ error: "La data è invalida" });
+    }
 
     //controllo che le variabili numeriche siano numeri
     if (isNaN(living_days)) {
