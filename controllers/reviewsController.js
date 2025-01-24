@@ -41,7 +41,7 @@ function store(req, res) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   //controllo la validità
-  if (isNaN(check_inDate.getTime()) || check_inDate < today) {
+  if (isNaN(check_inDate.getTime()) || check_inDate > today) {
     return res.status(400).json({ error: "La data è invalida" });
   }
 
