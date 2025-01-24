@@ -58,6 +58,8 @@ function store(req, res) {
     image = "default.jpg";
   }
 
+  //TODO CONTROLLO ESISTENZA DI OWNER ID
+
   //controllo dei parametri essenziali
   if (
     !title ||
@@ -67,7 +69,8 @@ function store(req, res) {
     !square_meters ||
     !address ||
     !reference_email ||
-    !city
+    !city ||
+    !owner_id
   ) {
     return res
       .status(400)
@@ -98,7 +101,7 @@ function store(req, res) {
   }
 
   const sql =
-    "INSERT INTO properties (title,n_Rooms,n_Beds,n_Bathrooms,square_meters,address,reference_email,likes,property_type,image,city) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO properties (title,n_Rooms,n_Beds,n_Bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
   connection.query(
     sql,
@@ -114,6 +117,7 @@ function store(req, res) {
       property_type,
       image,
       city,
+      owner_id,
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
