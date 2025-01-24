@@ -40,11 +40,11 @@ propertiesRouter.get("/filtered", (req, res) => {
   // Filtri dinamici
   if (city) {
     query += " AND city LIKE ?";
-    params.push(`${city.toLowerCase()}%`);
+    params.push(`%${city.toLowerCase()}%`);
   }
   if (address) {
     query += " AND address LIKE ?";
-    params.push(`${address.toLowerCase()}%`);
+    params.push(`%${address.toLowerCase()}%`);
   }
   if (n_Rooms && !isNaN(n_Rooms)) {
     query += " AND n_Rooms >= ?";
