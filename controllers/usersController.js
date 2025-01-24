@@ -76,11 +76,15 @@ function store(req, res) {
     }
 
     const sql =
-      "INSERT INTO users(email, name, surname, telephone) VAlUES (?,?,?,?)";
-    connection.query(sql, [email, name, surname, telephone], (err, results) => {
-      if (err) return res.status(500).json({ error: "Database error" });
-      res.status(201).json({ message: "Utente aggiunto con successo!" });
-    });
+      "INSERT INTO users(email, name, surname, telephone, isOwner) VAlUES (?,?,?,?,?)";
+    connection.query(
+      sql,
+      [email, name, surname, telephone, 0],
+      (err, results) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+        res.status(201).json({ message: "Utente aggiunto con successo!" });
+      }
+    );
   });
 }
 
