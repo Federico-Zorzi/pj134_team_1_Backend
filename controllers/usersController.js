@@ -13,20 +13,34 @@ function index(req, res) {
 
 //show
 function show(req, res) {
-  const { id } = req.params;
-  const sql = "SELECT * FROM users WHERE id = ?;";
+  const { email, id } = req.query;
 
-  if (isNaN(id) || id < 1) {
-    return res.status(400).json({ error: "Id inserito non valido" });
-  }
-
-  connection.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database query failed" });
-    if (results.length < 1) {
-      return res.status(404).json({ error: "Id non trovato" });
+  if (email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "L'email inserita è invalida" });
     }
-    res.json(results);
-  });
+
+    const sql = "SELECT * FROM users WHERE email = ?;";
+    connection.query(sql, [email], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      if (results.length < 1) {
+        return res.status(404).json({ error: "Email non trovata" });
+      }
+      return res.json(results);
+    });
+  } else if (id) {
+    const sql = "SELECT * FROM users WHERE id = ?;";
+    connection.query(sql, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      if (results.length < 1) {
+        return res.status(404).json({ error: "Utente non trovato" });
+      }
+      return res.json(results);
+    });
+  } else {
+    return res.status(400).json({ error: "Nessun parametro fornito" });
+  }
 }
 
 //store

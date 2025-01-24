@@ -1,6 +1,5 @@
 //* INDEX USERS : host/users/
-//* SHOW USER : host/users/:id
-//* SHOW USER BY EMAIL : host/users/:email
+//* SHOW USER : host/users/specificuser
 //* INDEX USERS EMAILS : host/users/emails
 //* STORE USER : users/add
 
@@ -32,28 +31,7 @@ usersRouter.get("/emails", (req, res) => {
 });
 
 //show
-usersRouter.get("/:id", usersController.show);
-
-//show by mail
-usersRouter.get("/:email", (req, res) => {
-  const { email } = req.params;
-
-  //controllo di validità della mail
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (email && !emailRegex.test(email)) {
-    return res.status(400).json({ error: "L'email inserita è invalida" });
-  }
-
-  const sql = "SELECT * FROM users WHERE email = ?;";
-
-  connection.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database query failed" });
-    if (results.length < 1) {
-      return res.status(404).json({ error: "Email non trovata" });
-    }
-    res.json(results);
-  });
-});
+usersRouter.get("/specificuser", usersController.show);
 
 //store
 usersRouter.post("/add", usersController.store);
