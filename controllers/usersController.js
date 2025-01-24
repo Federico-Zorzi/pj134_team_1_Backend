@@ -55,7 +55,7 @@ function store(req, res) {
   }
 
   //controllo che il numero di telefono sia un numero
-  if (telephone && isNaN(telephone)) {
+  if (telephone) {
     return res
       .status(400)
       .json({ error: "il numero di telefono deve essere un numero" });

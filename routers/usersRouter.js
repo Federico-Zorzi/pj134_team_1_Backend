@@ -2,7 +2,9 @@
 //* SHOW USER : host/users/specificuser
 //* SHOW PROPERY BY USER ID :
 //* INDEX USERS EMAILS : host/users/emails
-//* STORE USER : host/users/getproperties/:userid
+//* INDEX USER PROPERTIES : host/users/getproperties/:userid
+//* STORE USER host/users/add
+
 //Inizializzazione express
 const express = require("express");
 //Permessi di routing da express

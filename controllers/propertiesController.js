@@ -122,6 +122,13 @@ function store(req, res) {
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
       res.status(201).json({ message: "Immobile aggiunto con successo!" });
+      //TODO CHIAMATA PER SETTARE LO USER CHE CREA L'iMMOBILE COME OWNER
+      const updateUserStatusSql = "UPDATE users SET isOwner = 1 WHERE id = ?";
+      connection.query(updateUserStatusSql, [owner_id], (err, res) => {
+        if (err)
+          return res.status(500).json({ error: "Database query failed" });
+        console.log("Users status updated");
+      });
     }
   );
 }
