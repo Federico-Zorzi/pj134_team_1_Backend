@@ -45,7 +45,8 @@ function show(req, res) {
 
 //store
 function store(req, res) {
-  const { email, name, surname, telephone } = req.body;
+  const { email, name, surname } = req.body;
+  let { telephone } = req.body;
 
   console.log(email, name, surname, telephone);
 
@@ -54,13 +55,9 @@ function store(req, res) {
     return res.status(400).json({ error: "Mancano parametri essenziali" });
   }
 
-  //controllo che il numero di telefono sia un numero
-  if (telephone) {
-    return res
-      .status(400)
-      .json({ error: "il numero di telefono deve essere un numero" });
+  if (!telephone) {
+    telephone = "Nessun numero";
   }
-
   //controllo se la mail esiste già
   const checkEmailSql = "SELECT * FROM users WHERE email = ?";
   connection.query(checkEmailSql, [email], (err, results) => {
