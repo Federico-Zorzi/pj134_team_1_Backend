@@ -105,7 +105,7 @@ function store(req, res) {
   }
 
   const sql =
-    "INSERT INTO properties (title,description,number_of_rooms,number_of_beds,number_of_bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO properties (title,description,number_of_rooms,number_of_beds,number_of_bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   connection.query(
     sql,
