@@ -34,26 +34,25 @@ function store(req, res) {
   //destrutturazione del body
   const {
     title,
-    n_Rooms,
-    n_Beds,
-    n_Bathrooms,
+    number_of_rooms,
+    number_of_beds,
+    number_of_bathrooms,
     square_meters,
     address,
     reference_email,
     city,
     owner_id,
+    description,
+    property_type,
   } = req.body;
 
-  let { property_type, image } = req.body;
+  let { image } = req.body;
 
   //inizializzazione likes
   const likes = 0;
 
   //controllo dei parametri nullabili
 
-  if (!property_type) {
-    property_type = "other";
-  }
   if (!image) {
     image = "default.jpg";
   }
@@ -63,14 +62,16 @@ function store(req, res) {
   //controllo dei parametri essenziali
   if (
     !title ||
-    !n_Rooms ||
-    !n_Beds ||
-    !n_Bathrooms ||
+    !number_of_rooms ||
+    !number_of_beds ||
+    !number_of_bathrooms ||
     !square_meters ||
     !address ||
     !reference_email ||
     !city ||
-    !owner_id
+    !owner_id ||
+    !description ||
+    !property_type
   ) {
     return res
       .status(400)
@@ -83,33 +84,37 @@ function store(req, res) {
       .status(400)
       .json({ error: "I metri quadri devono essere un numero" });
   }
-  if (isNaN(n_Beds)) {
+  if (isNaN(number_of_beds)) {
     return res
       .status(400)
       .json({ error: "Il numero di letti deve essere un numero" });
   }
 
-  if (isNaN(n_Bathrooms)) {
+  if (isNaN(number_of_bathrooms)) {
     return res
       .status(400)
       .json({ error: "Il numero di bagni deve essere un numero" });
   }
-  if (isNaN(n_Rooms)) {
+  if (isNaN(number_of_rooms)) {
     return res
       .status(400)
       .json({ error: "Il numero di stanze deve essere un numero" });
   }
+  if (isNaN(property_type)) {
+    return res.status(400).json({ error: "Il property_type è invalido" });
+  }
 
   const sql =
-    "INSERT INTO properties (title,n_Rooms,n_Beds,n_Bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO properties (title,description,number_of_rooms,number_of_beds,number_of_bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
   connection.query(
     sql,
     [
       title,
-      n_Rooms,
-      n_Beds,
-      n_Bathrooms,
+      description,
+      number_of_rooms,
+      number_of_beds,
+      number_of_bathrooms,
       square_meters,
       address,
       reference_email,
@@ -122,7 +127,7 @@ function store(req, res) {
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
       res.status(201).json({ message: "Immobile aggiunto con successo!" });
-      //TODO CHIAMATA PER SETTARE LO USER CHE CREA L'iMMOBILE COME OWNER
+
       const updateUserStatusSql = "UPDATE users SET isOwner = 1 WHERE id = ?";
       connection.query(updateUserStatusSql, [owner_id], (err, res) => {
         if (err)
@@ -151,9 +156,10 @@ function update(req, res) {
 
     const {
       title = existingData.title,
-      n_Rooms = existingData.n_Rooms,
-      n_Beds = existingData.n_Beds,
-      n_Bathrooms = existingData.n_Bathrooms,
+      description = existingData.description,
+      number_of_rooms = existingData.number_of_rooms,
+      number_of_beds = existingData.number_of_beds,
+      number_of_bathrooms = existingData.number_of_bathrooms,
       square_meters = existingData.square_meters,
       address = existingData.address,
       reference_email = existingData.reference_email,
@@ -168,21 +174,24 @@ function update(req, res) {
         .status(400)
         .json({ error: "I metri quadri devono essere un numero" });
     }
-    if (isNaN(n_Beds)) {
+    if (isNaN(number_of_beds)) {
       return res
         .status(400)
         .json({ error: "Il numero di letti deve essere un numero" });
     }
 
-    if (isNaN(n_Bathrooms)) {
+    if (isNaN(number_of_bathrooms)) {
       return res
         .status(400)
         .json({ error: "Il numero di bagni deve essere un numero" });
     }
-    if (isNaN(n_Rooms)) {
+    if (isNaN(number_of_rooms)) {
       return res
         .status(400)
         .json({ error: "Il numero di stanze deve essere un numero" });
+    }
+    if (isNaN(property_type)) {
+      return res.status(400).json({ error: "Il property_type è invalido" });
     }
 
     //controllo di validità della mail
@@ -192,13 +201,14 @@ function update(req, res) {
     }
 
     const updateSql =
-      "  UPDATE properties SET title = ?,    n_Rooms = ?,    n_Beds = ?,   n_Bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    city = ?WHERE id = ?; ";
+      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    city = ? WHERE id = ?; ";
 
     const values = [
       title,
-      n_Rooms,
-      n_Beds,
-      n_Bathrooms,
+      description,
+      number_of_rooms,
+      number_of_beds,
+      number_of_bathrooms,
       square_meters,
       address,
       reference_email,
@@ -208,7 +218,6 @@ function update(req, res) {
       id,
     ];
 
-    // Update the property with new or retained data
     connection.query(updateSql, values, (updateErr, updateResults) => {
       if (updateErr)
         return res.status(500).json({ error: "Database update failed" });

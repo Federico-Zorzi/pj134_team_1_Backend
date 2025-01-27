@@ -31,7 +31,7 @@ propertiesRouter.get("/", propertiesController.index);
 
 //index filtrato
 propertiesRouter.get("/filtered", (req, res) => {
-  const { city, address, n_Rooms, n_Beds, property_type } = req.query;
+  const { city, address, number_of_rooms, number_of_beds, property_type } = req.query;
 
   // base query
   let query = "SELECT * FROM properties WHERE 1=1";
@@ -39,20 +39,20 @@ propertiesRouter.get("/filtered", (req, res) => {
 
   // Filtri dinamici
   if (city) {
-    query += " AND city LIKE ?";
+    query += " AND LOWER(city) LIKE ?";
     params.push(`%${city.toLowerCase()}%`);
   }
   if (address) {
-    query += " AND address LIKE ?";
+    query += " AND LOWER(address) LIKE ?";
     params.push(`%${address.toLowerCase()}%`);
   }
-  if (n_Rooms && !isNaN(n_Rooms)) {
-    query += " AND n_Rooms >= ?";
-    params.push(n_Rooms);
+  if (number_of_rooms && !isNaN(number_of_rooms)) {
+    query += " AND number_of_rooms >= ?";
+    params.push(number_of_rooms);
   }
-  if (n_Beds && !isNaN(n_Beds)) {
-    query += " AND n_Beds >= ?";
-    params.push(n_Beds);
+  if (number_of_beds && !isNaN(number_of_beds)) {
+    query += " AND number_of_beds >= ?";
+    params.push(number_of_beds);
   }
   if (property_type) {
     query += " AND property_type = ?";
