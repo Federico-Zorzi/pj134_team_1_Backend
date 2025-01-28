@@ -31,6 +31,8 @@ function show(req, res) {
 
 //store
 function store(req, res) {
+  console.log(req.body);
+
   //destrutturazione del body
   const {
     title,
@@ -43,10 +45,9 @@ function store(req, res) {
     city,
     owner_id,
     description,
-    property_type,
   } = req.body;
 
-  let { image } = req.body;
+  let { image, property_type } = req.body;
 
   //inizializzazione likes
   const likes = 0;
@@ -55,6 +56,9 @@ function store(req, res) {
 
   if (!image) {
     image = "default.jpg";
+  }
+  if (!property_type) {
+    property_type = 1;
   }
 
   //TODO CONTROLLO ESISTENZA DI OWNER ID
@@ -70,8 +74,7 @@ function store(req, res) {
     !reference_email ||
     !city ||
     !owner_id ||
-    !description ||
-    !property_type
+    !description
   ) {
     return res
       .status(400)

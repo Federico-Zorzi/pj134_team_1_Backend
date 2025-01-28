@@ -1,6 +1,5 @@
 //* INDEX USERS : host/users/
 //* SHOW USER : host/users/specificuser
-//* SHOW PROPERY BY USER ID :
 //* INDEX USERS EMAILS : host/users/emails
 //* INDEX USER PROPERTIES : host/users/getproperties/:userid
 //* STORE USER host/users/add
