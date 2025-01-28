@@ -31,7 +31,8 @@ propertiesRouter.get("/", propertiesController.index);
 
 //index filtrato
 propertiesRouter.get("/filtered", (req, res) => {
-  const { city, address, number_of_rooms, number_of_beds, property_type } = req.query;
+  const { city, address, number_of_rooms, number_of_beds, property_type } =
+    req.query;
 
   // base query
   let query = "SELECT * FROM properties WHERE 1=1";
@@ -77,12 +78,20 @@ propertiesRouter.post("/add", propertiesController.store);
 //add like update
 propertiesRouter.patch("/:id/addlike", (req, res) => {
   const { id } = req.params;
+  const { likes = 1 } = req.body;
 
-  const sql = "UPDATE properties SET likes = likes + 1 WHERE id = ?";
+  if (isNaN(likes) || likes <= 0) {
+    return res.status(400).json({ error: "Non puoi togliere like" });
+  }
 
-  connection.query(sql, [id], (err, results) => {
+  const sql = "UPDATE properties SET likes = likes + ? WHERE id = ?";
+
+  connection.query(sql, [likes, id], (err, results) => {
     if (err) return res.status(500).json({ error: "Database query failed" });
-    res.json("Like aggiunto con successo");
+    res.json({
+      message: "Like aggiunto con successo",
+      affectedRows: results.affectedRows,
+    });
   });
 });
 
