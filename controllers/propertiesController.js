@@ -47,6 +47,7 @@ function store(req, res) {
     description,
     latitude,
     longitude,
+    zip_code,
   } = req.body;
 
   let { image, property_type } = req.body;
@@ -76,7 +77,8 @@ function store(req, res) {
     !owner_id ||
     !description ||
     !latitude ||
-    !longitude
+    !longitude ||
+    !zip_code
   ) {
     return res
       .status(400)
@@ -125,8 +127,19 @@ function store(req, res) {
       .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
   }
 
+  if (isNaN(zip_code) || zip_code <= 0 || zip_code > 99999) {
+    return res
+      .status(400)
+      .json({ error: "Il codice postale deve essere un numero" });
+  }
+
+  const zipCodeRegex = /^\d{4}$/;
+  if (zipCodeRegex.test(zip_code)) {
+    return res.status(400).json({ error: "Codice postale invalido" });
+  }
+
   const sql =
-    "INSERT INTO properties (title, description, number_of_rooms, number_of_beds, number_of_bathrooms, square_meters, address, reference_email, likes, property_type, image, municipality, owner_id, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO properties (title, description, number_of_rooms, number_of_beds, number_of_bathrooms, square_meters, address, reference_email, likes, property_type, image, municipality, owner_id, latitude, longitude,zip_code) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   connection.query(
     sql,
@@ -146,6 +159,7 @@ function store(req, res) {
       owner_id,
       latitude,
       longitude,
+      zip_code,
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
@@ -191,6 +205,7 @@ function update(req, res) {
       municipality = existingData.municipality,
       latitude = existingData.latitude,
       longitude = existingData.longitude,
+      zip_code = existingData.zip_code,
     } = req.body;
 
     //controllo le varibili numeriche siano numeri
@@ -235,6 +250,17 @@ function update(req, res) {
         .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
     }
 
+    if (isNaN(zip_code) || zip_code <= 0 || zip_code > 99999) {
+      return res
+        .status(400)
+        .json({ error: "Il codice postale deve essere un numero" });
+    }
+
+    const zipCodeRegex = /^\d{4}$/;
+    if (zipCodeRegex.test(zip_code)) {
+      return res.status(400).json({ error: "Codice postale invalido" });
+    }
+
     //controllo di validità della mail
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (reference_email && !emailRegex.test(reference_email)) {
@@ -242,7 +268,7 @@ function update(req, res) {
     }
 
     const updateSql =
-      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    municipality = ? , latitude = ?, longitude = ? WHERE id = ?; ";
+      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    municipality = ? , latitude = ?, longitude = ?, zip_code = ? WHERE id = ?; ";
 
     const values = [
       title,
@@ -259,6 +285,7 @@ function update(req, res) {
       latitude,
       longitude,
       id,
+      zip_code,
     ];
 
     connection.query(updateSql, values, (updateErr, updateResults) => {
