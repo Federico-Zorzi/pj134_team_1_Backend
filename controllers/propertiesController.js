@@ -124,12 +124,6 @@ function store(req, res) {
       .status(400)
       .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
   }
-  const municipalityPattern = /^[a-zA-Z\s]+(?:\([A-Za-z]{2,3}\))$/;
-  if (!municipalityPattern.test(municipality)) {
-    return res
-      .status(400)
-      .json({ error: "Il comune deve seguire il formato 'comune(provincia)'" });
-  }
 
   const sql =
     "INSERT INTO properties (title, description, number_of_rooms, number_of_beds, number_of_bathrooms, square_meters, address, reference_email, likes, property_type, image, municipality, owner_id, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -239,15 +233,6 @@ function update(req, res) {
       return res
         .status(400)
         .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
-    }
-
-    const municipalityPattern = /^[a-zA-Z\s]+(?:\([A-Za-z]{2,3}\))$/;
-    if (!municipalityPattern.test(municipality)) {
-      return res
-        .status(400)
-        .json({
-          error: "Il comune deve seguire il formato 'comune(provincia)'",
-        });
     }
 
     //controllo di validità della mail
