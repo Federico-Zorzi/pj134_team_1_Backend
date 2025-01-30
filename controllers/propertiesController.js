@@ -42,9 +42,11 @@ function store(req, res) {
     square_meters,
     address,
     reference_email,
-    city,
+    municipality,
     owner_id,
     description,
+    latitude,
+    longitude,
   } = req.body;
 
   let { image, property_type } = req.body;
@@ -61,8 +63,6 @@ function store(req, res) {
     property_type = 1;
   }
 
-  //TODO CONTROLLO ESISTENZA DI OWNER ID
-
   //controllo dei parametri essenziali
   if (
     !title ||
@@ -72,9 +72,11 @@ function store(req, res) {
     !square_meters ||
     !address ||
     !reference_email ||
-    !city ||
+    !municipality ||
     !owner_id ||
-    !description
+    !description ||
+    !latitude ||
+    !longitude
   ) {
     return res
       .status(400)
@@ -107,8 +109,24 @@ function store(req, res) {
     return res.status(400).json({ error: "Il property_type è invalido" });
   }
 
+  if (isNaN(latitude) || isNaN(longitude)) {
+    return res
+      .status(400)
+      .json({ error: "Latitudine e longitudine devono essere numeri" });
+  }
+  if (latitude < -90 || latitude > 90) {
+    return res
+      .status(400)
+      .json({ error: "Latitudine non valida. Deve essere tra -90 e 90" });
+  }
+  if (longitude < -180 || longitude > 180) {
+    return res
+      .status(400)
+      .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
+  }
+
   const sql =
-    "INSERT INTO properties (title,description,number_of_rooms,number_of_beds,number_of_bathrooms,square_meters,address,reference_email,likes,property_type,image,city,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO properties (title, description, number_of_rooms, number_of_beds, number_of_bathrooms, square_meters, address, reference_email, likes, property_type, image, municipality, owner_id, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   connection.query(
     sql,
@@ -124,8 +142,10 @@ function store(req, res) {
       likes,
       property_type,
       image,
-      city,
+      municipality,
       owner_id,
+      latitude,
+      longitude,
     ],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Database error" });
@@ -168,7 +188,9 @@ function update(req, res) {
       reference_email = existingData.reference_email,
       property_type = existingData.property_type,
       image = existingData.image,
-      city = existingData.city,
+      municipality = existingData.municipality,
+      latitude = existingData.latitude,
+      longitude = existingData.longitude,
     } = req.body;
 
     //controllo le varibili numeriche siano numeri
@@ -197,6 +219,22 @@ function update(req, res) {
       return res.status(400).json({ error: "Il property_type è invalido" });
     }
 
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res
+        .status(400)
+        .json({ error: "Latitudine e longitudine devono essere numeri" });
+    }
+    if (latitude < -90 || latitude > 90) {
+      return res
+        .status(400)
+        .json({ error: "Latitudine non valida. Deve essere tra -90 e 90" });
+    }
+    if (longitude < -180 || longitude > 180) {
+      return res
+        .status(400)
+        .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
+    }
+
     //controllo di validità della mail
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (reference_email && !emailRegex.test(reference_email)) {
@@ -204,7 +242,7 @@ function update(req, res) {
     }
 
     const updateSql =
-      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    city = ? WHERE id = ?; ";
+      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    municipality = ? , latitude = ?, longitude = ? WHERE id = ?; ";
 
     const values = [
       title,
@@ -217,13 +255,16 @@ function update(req, res) {
       reference_email,
       property_type,
       image,
-      city,
+      municipality,
+      latitude,
+      longitude,
       id,
     ];
 
     connection.query(updateSql, values, (updateErr, updateResults) => {
       if (updateErr)
         return res.status(500).json({ error: "Database update failed" });
+      console.log(updateResults);
       res.json({ message: "Proprietà modificata con successo!" });
     });
   });

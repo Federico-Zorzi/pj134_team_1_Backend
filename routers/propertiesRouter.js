@@ -31,7 +31,7 @@ propertiesRouter.get("/", propertiesController.index);
 
 //index filtrato
 propertiesRouter.get("/filtered", (req, res) => {
-  const { city, address, number_of_rooms, number_of_beds, property_type } =
+  const { municipality, address, number_of_rooms, number_of_beds, property_type } =
     req.query;
 
   // base query
@@ -39,9 +39,9 @@ propertiesRouter.get("/filtered", (req, res) => {
   const params = [];
 
   // Filtri dinamici
-  if (city) {
-    query += " AND LOWER(city) LIKE ?";
-    params.push(`%${city.toLowerCase()}%`);
+  if (municipality) {
+    query += " AND LOWER(municipality) LIKE ?";
+    params.push(`%${municipality.toLowerCase()}%`);
   }
   if (address) {
     query += " AND LOWER(address) LIKE ?";
