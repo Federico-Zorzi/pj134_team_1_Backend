@@ -175,9 +175,9 @@ function store(req, res) {
   );
 }
 
-//update
 function update(req, res) {
   const { id } = req.params;
+  console.log(req.body);
 
   const fetchSql = "SELECT * FROM properties WHERE id = ?";
 
@@ -186,6 +186,7 @@ function update(req, res) {
       return res
         .status(500)
         .json({ error: "Failed to fetch existing property data" });
+
     if (fetchResults.length === 0)
       return res.status(404).json({ error: "Proprietà non trovata" });
 
@@ -208,67 +209,63 @@ function update(req, res) {
       zip_code = existingData.zip_code,
     } = req.body;
 
-    //controllo le varibili numeriche siano numeri
-    if (isNaN(square_meters)) {
+    // Numeric validations
+    if (isNaN(square_meters) || square_meters <= 0)
       return res
         .status(400)
-        .json({ error: "I metri quadri devono essere un numero" });
-    }
-    if (isNaN(number_of_beds)) {
+        .json({ error: "I metri quadri devono essere un numero positivo" });
+
+    if (isNaN(number_of_beds) || number_of_beds < 0)
       return res
         .status(400)
-        .json({ error: "Il numero di letti deve essere un numero" });
+        .json({ error: "Il numero di letti deve essere un numero positivo" });
+
+    if (isNaN(number_of_bathrooms) || number_of_bathrooms < 0)
+      return res
+        .status(400)
+        .json({ error: "Il numero di bagni deve essere un numero positivo" });
+
+    if (isNaN(number_of_rooms) || number_of_rooms < 0)
+      return res
+        .status(400)
+        .json({ error: "Il numero di stanze deve essere un numero positivo" });
+
+    if (isNaN(property_type) || property_type < 0 || property_type > 7) {
+      return res.status(400).json({ error: "Il tipo di proprietà è invalido" });
     }
 
-    if (isNaN(number_of_bathrooms)) {
-      return res
-        .status(400)
-        .json({ error: "Il numero di bagni deve essere un numero" });
-    }
-    if (isNaN(number_of_rooms)) {
-      return res
-        .status(400)
-        .json({ error: "Il numero di stanze deve essere un numero" });
-    }
-    if (isNaN(property_type)) {
-      return res.status(400).json({ error: "Il property_type è invalido" });
-    }
-
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res
-        .status(400)
-        .json({ error: "Latitudine e longitudine devono essere numeri" });
-    }
-    if (latitude < -90 || latitude > 90) {
+    if (isNaN(latitude) || latitude < -90 || latitude > 90)
       return res
         .status(400)
         .json({ error: "Latitudine non valida. Deve essere tra -90 e 90" });
-    }
-    if (longitude < -180 || longitude > 180) {
+
+    if (isNaN(longitude) || longitude < -180 || longitude > 180)
       return res
         .status(400)
         .json({ error: "Longitudine non valida. Deve essere tra -180 e 180" });
-    }
 
-    if (isNaN(zip_code) || zip_code <= 0 || zip_code > 99999) {
+    // Zip code validation
+    if (isNaN(zip_code) || zip_code <= 0 || zip_code > 99999)
       return res
         .status(400)
-        .json({ error: "Il codice postale deve essere un numero" });
-    }
+        .json({ error: "Il codice postale deve essere un numero valido" });
 
-    const zipCodeRegex = /^\d{4}$/;
-    if (zipCodeRegex.test(zip_code)) {
+    const zipCodeRegex = /^\d{4,5}$/;
+    if (!zipCodeRegex.test(zip_code))
       return res.status(400).json({ error: "Codice postale invalido" });
-    }
 
-    //controllo di validità della mail
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (reference_email && !emailRegex.test(reference_email)) {
+    if (reference_email && !emailRegex.test(reference_email))
       return res.status(400).json({ error: "L'email inserita è invalida" });
-    }
 
-    const updateSql =
-      "  UPDATE properties SET title = ?, description = ?,    number_of_rooms = ?,    number_of_beds = ?,   number_of_bathrooms = ?,   square_meters = ?,   address = ?,   reference_email = ?,   property_type = ?,    image = ?,    municipality = ? , latitude = ?, longitude = ?, zip_code = ? WHERE id = ?; ";
+    const updateSql = `
+      UPDATE properties SET
+        title = ?, description = ?, number_of_rooms = ?, number_of_beds = ?,
+        number_of_bathrooms = ?, square_meters = ?, address = ?, reference_email = ?,
+        property_type = ?, image = ?, municipality = ?, latitude = ?, longitude = ?, zip_code = ?
+      WHERE id = ?;
+    `;
 
     const values = [
       title,
@@ -284,13 +281,14 @@ function update(req, res) {
       municipality,
       latitude,
       longitude,
-      id,
       zip_code,
+      id,
     ];
 
     connection.query(updateSql, values, (updateErr, updateResults) => {
       if (updateErr)
         return res.status(500).json({ error: "Database update failed" });
+
       console.log(updateResults);
       res.json({ message: "Proprietà modificata con successo!" });
     });
